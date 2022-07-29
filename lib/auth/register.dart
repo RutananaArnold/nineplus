@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:nineplus/widgets/phone_widget.dart';
 import 'package:nineplus/widgets/rounded_input.dart';
+import 'package:nineplus/widgets/rounded_password_field.dart';
 
 import '../widgets/rounded_button.dart';
 
@@ -12,22 +14,22 @@ class Register extends StatefulWidget {
 
 class _RegisterState extends State<Register> {
   static final emailController = TextEditingController();
-  static final passwordController = TextEditingController();
-  static final telController = TextEditingController();
+  late String tel;
+  final passwordController = TextEditingController();
+  // static final telController = TextEditingController();
   List<TextEditingController> controllers = [
     emailController,
-    passwordController,
   ];
 
   List<String> labels = [
     "Email",
-    "Password",
   ];
   List<String> hints = [
     "Enter Email",
-    "Enter Password",
   ];
-  List<IconData> icons = [Icons.email, Icons.phone, Icons.lock];
+  List<IconData> icons = [
+    Icons.email,
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -36,46 +38,49 @@ class _RegisterState extends State<Register> {
     return Scaffold(
       body: Form(
           key: formkey,
-          child: ListView.builder(
-              itemCount: 3,
-              itemBuilder: ((context, index) {
-                if (index == 0) {
-                  return SizedBox(
-                    height: size.height * 0.06,
-                    child: const Center(
-                      child: Text(
-                        "Sign up",
-                        textHeightBehavior: TextHeightBehavior(),
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 22,
+          child: Column(
+            children: List<Widget>.generate(
+              5,
+              (index) => index == 0
+                  ? SizedBox(
+                      height: size.height * 0.06,
+                      child: const Center(
+                        child: Text(
+                          "Sign up",
+                          textHeightBehavior: TextHeightBehavior(),
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 22,
+                          ),
                         ),
                       ),
-                    ),
-                  );
-                } else if (index == 2) {
-                  return RoundedButton(
-                      text: "Signup", press: () {}, color: Colors.redAccent);
-                } else {
-                  return RoundedInput(
-                      label: labels[index],
-                      hint: hints[index],
-                      icon: icons[index],
-                      ontap: () {},
-                      handler: controllers[index]);
-                }
-                // if (index != 4) {
-                //   return RoundedInput(
-                //       label: labels[index],
-                //       hint: hints[index],
-                //       icon: icons[index],
-                //       ontap: () {},
-                //       handler: controllers[index]);
-                // } else {
-                //   return RoundedButton(
-                //       text: "Signup", press: () {}, color: Colors.redAccent);
-                // }
-              }))),
+                    )
+                  : index == 2
+                      ? PhoneField(
+                          label: "Phone",
+                          controller: passwordController,
+                          onChanged: (phone) {
+                            tel = phone.completeNumber;
+                          },
+                        )
+                      : index == 3
+                          ? RoundedPasswordField(
+                              hintText: "Enter Password",
+                              controller: passwordController)
+                          : index != 4
+                              ? RoundedInput(
+                                  label: labels[(index - 1)],
+                                  hint: hints[(index - 1)],
+                                  icon: icons[(index - 1)],
+                                  ontap: () {},
+                                  handler: controllers[index - 1],
+                                )
+                              : RoundedButton(
+                                  text: "Signup",
+                                  press: () {},
+                                  color: Colors.redAccent),
+            ),
+          )),
     );
   }
 }
