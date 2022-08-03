@@ -1,4 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:nineplus/auth/register.dart';
+import 'package:nineplus/constants/color_pallete.dart';
+import 'package:nineplus/screens/forgotpassword.dart';
+import 'package:nineplus/screens/index.dart';
+import 'package:nineplus/widgets/rounded_button.dart';
+import 'package:nineplus/widgets/rounded_input_field.dart';
+import 'package:nineplus/widgets/rounded_password_field.dart';
 
 class Login extends StatefulWidget {
   Login({Key? key}) : super(key: key);
@@ -8,8 +15,145 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
+  var formkey = GlobalKey<FormState>();
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
   @override
   Widget build(BuildContext context) {
-    return Container();
+    final size = MediaQuery.of(context).size;
+    return Scaffold(
+      body: SingleChildScrollView(
+          child: Form(
+        key: formkey,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            SizedBox(height: size.height * 0.05),
+            const Text(
+              "Log in",
+              textHeightBehavior: TextHeightBehavior(),
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 22,
+              ),
+            ),
+            SizedBox(height: size.height * 0.03),
+            // SvgPicture.asset(
+            //   "images/login.svg",
+            //   height: size.height * 0.35,
+            // ),
+            Icon(
+              Icons.verified_user_rounded,
+              size: size.height * 0.35,
+            ),
+            SizedBox(height: size.height * 0.03),
+            RoundedInputField(
+              icon: Icons.mail_outline_rounded,
+              controller: emailController,
+              hintText: "Your Email",
+            ),
+            RoundedPasswordField(
+              controller: passwordController,
+              hintText: 'Your password',
+            ),
+            forgotYourPasswordUI(),
+            RoundedButton(
+              text: "LOGIN",
+              press: () {
+                if (formkey.currentState!.validate()) {
+                  Navigator.of(context).pushAndRemoveUntil(
+                      MaterialPageRoute(builder: (context) => Index()),
+                      (route) => false);
+                }
+              },
+              color: kPrimaryColor,
+            ),
+            SizedBox(height: size.height * 0.03),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                const Text(
+                  "Don't have an account ? ",
+                  style: TextStyle(fontSize: 13, color: kPrimaryColor),
+                ),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute<void>(
+                        builder: (BuildContext context) => Register(),
+                      ),
+                    );
+                  },
+                  child: const Text(
+                    "Sign Up",
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: kPrimaryColor,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                const Text(
+                  "OR",
+                  style: TextStyle(fontSize: 15, color: kPrimaryColor),
+                ),
+                GestureDetector(
+                  onTap: () {
+                    // Navigator.push(
+                    //   context,
+                    //   MaterialPageRoute<void>(
+                    //     builder: (BuildContext context) =>
+                    //         Login(),
+                    //   ),
+                    // );
+                  },
+                  child: const Text(
+                    "Go Anonymously",
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: kPrimaryColor,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      )),
+    );
+  }
+
+  Widget forgotYourPasswordUI() {
+    return Padding(
+      padding: const EdgeInsets.only(top: 8, right: 16, bottom: 8, left: 16),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          InkWell(
+            borderRadius: const BorderRadius.all(Radius.circular(8)),
+            onTap: () {
+              Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(
+                      builder: (context) => const ForgotPasswordScreen()),
+                  (route) => true);
+            },
+            child: const Padding(
+              padding: EdgeInsets.all(8.0),
+              child: Text(
+                "Forgot yourPassword?",
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.black,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

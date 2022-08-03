@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:nineplus/auth/login.dart';
-import 'package:nineplus/auth/register.dart';
 import 'package:nineplus/widgets/bottom-anime.dart';
 
 import '../widgets/Space.dart';
@@ -28,8 +27,7 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
     // animate the splash screen for 5 seconds
     Timer(const Duration(seconds: 5), () {
       Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: ((context) => Register())),
-          (route) => false);
+          MaterialPageRoute(builder: ((context) => Login())), (route) => false);
     });
   }
 
@@ -61,8 +59,8 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
                   child: CircularProgressIndicator.adaptive(),
                 ),
                 Space(space: 0.08),
-                const Text(" Your Reliable Last Mile Friend",
-                    style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600))
+                const Text(" 9+",
+                    style: TextStyle(fontSize: 30, fontWeight: FontWeight.w600))
               ],
             ),
           ),
