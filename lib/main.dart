@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:nineplus/Splash.dart';
+import 'package:nineplus/splash.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import 'screens/index.dart';
 
 void main() {
   runApp(const MyApp());
@@ -26,7 +29,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.cyan,
       ),
       debugShowCheckedModeBanner: false,
-      home: const Splash(),
+      home: const Main(),
     );
   }
 }
@@ -43,10 +46,22 @@ class _MainState extends State<Main> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    checkLoginDetails();
+    checkLoginCredentials();
   }
 
-  checkLoginDetails() {}
+  checkLoginCredentials() async {
+    final sharedPrefs = await SharedPreferences.getInstance();
+    if (sharedPrefs.getInt("userId") == null) {
+      Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (BuildContext context) => const Splash()),
+          (Route<dynamic> route) => false);
+    } else {
+      Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (BuildContext context) => Index()),
+          (Route<dynamic> route) => false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container();

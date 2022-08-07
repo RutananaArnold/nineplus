@@ -1,11 +1,18 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:nineplus/auth/register.dart';
 import 'package:nineplus/constants/color_pallete.dart';
+import 'package:nineplus/models/logged_in.dart';
 import 'package:nineplus/screens/forgotpassword.dart';
 import 'package:nineplus/screens/index.dart';
 import 'package:nineplus/widgets/rounded_button.dart';
 import 'package:nineplus/widgets/rounded_input_field.dart';
 import 'package:nineplus/widgets/rounded_password_field.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
+
+import '../constants/config.dart';
 
 class Login extends StatefulWidget {
   Login({Key? key}) : super(key: key);
@@ -60,11 +67,8 @@ class _LoginState extends State<Login> {
             RoundedButton(
               text: "LOGIN",
               press: () {
-                if (formkey.currentState!.validate()) {
-                  Navigator.of(context).pushAndRemoveUntil(
-                      MaterialPageRoute(builder: (context) => Index()),
-                      (route) => false);
-                }
+                formkey.currentState!.validate();
+                loggingIn(emailController.text, passwordController.text);
               },
               color: kPrimaryColor,
             ),
@@ -155,5 +159,53 @@ class _LoginState extends State<Login> {
         ],
       ),
     );
+  }
+
+  // registration logic
+  _setHeaders() => {
+        'Content-type': 'application/json',
+        'Accept': 'application/json',
+        "Access-Control-Allow-Origin": "*",
+      };
+
+  loggingIn(String email, String password) async {
+    Map data = {
+      "email": email,
+      "password": password,
+    };
+    print(data);
+    // Obtain shared preferences.
+    final prefs = await SharedPreferences.getInstance();
+
+    var jsonResponse;
+
+    var response = await http.post(
+      Uri.parse(apiUrl + "/login"),
+      body: jsonEncode(data),
+      headers: _setHeaders(),
+    );
+    if (response.statusCode == 200) {
+      jsonResponse = LoggedInUser.fromJson(jsonDecode(response.body));
+      print(jsonResponse.data.id);
+      if (jsonResponse != null) {
+        // Save an integer value to 'userId' key.
+        await prefs.setInt('userId', jsonResponse.data.id);
+        final snackBar = SnackBar(
+          content: Text(jsonResponse.status),
+        );
+
+        // Find the ScaffoldMessenger in the widget tree
+        // and use it to show a SnackBar.
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+        Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(
+              builder: (context) => Index(),
+            ),
+            (route) => false);
+      }
+    } else {
+      jsonResponse = json.decode(response.body);
+    }
   }
 }
