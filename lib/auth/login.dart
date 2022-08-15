@@ -177,7 +177,7 @@ class _LoginState extends State<Login> {
     // Obtain shared preferences.
     final prefs = await SharedPreferences.getInstance();
 
-    var jsonResponse;
+    LoggedInUser jsonResponse;
 
     var response = await http.post(
       Uri.parse(apiUrl + "/login"),
@@ -187,23 +187,20 @@ class _LoginState extends State<Login> {
     if (response.statusCode == 200) {
       jsonResponse = LoggedInUser.fromJson(jsonDecode(response.body));
       print(jsonResponse.data.id);
-      if (jsonResponse != null) {
-        // Save an integer value to 'userId' key.
-        await prefs.setInt('userId', jsonResponse.data.id);
-        final snackBar = SnackBar(
-          content: Text(jsonResponse.status),
-        );
+      await prefs.setInt('userId', jsonResponse.data.id);
+      final snackBar = SnackBar(
+        content: Text(jsonResponse.status),
+      );
 
-        // Find the ScaffoldMessenger in the widget tree
-        // and use it to show a SnackBar.
-        ScaffoldMessenger.of(context).showSnackBar(snackBar);
-        Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(
-              builder: (context) => Index(),
-            ),
-            (route) => false);
-      }
+      // Find the ScaffoldMessenger in the widget tree
+      // and use it to show a SnackBar.
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+            builder: (context) => Index(),
+          ),
+          (route) => false);
     } else {
       jsonResponse = json.decode(response.body);
     }
