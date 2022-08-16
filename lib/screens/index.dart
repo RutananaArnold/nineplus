@@ -4,7 +4,8 @@ import 'package:nineplus/screens/profile.dart';
 import 'package:nineplus/widgets/drawer_tile.dart';
 
 class Index extends StatefulWidget {
-  Index({Key? key}) : super(key: key);
+   int id;
+  Index({Key? key, this.id = 0}) : super(key: key);
 
   @override
   State<Index> createState() => _IndexState();
@@ -12,7 +13,7 @@ class Index extends StatefulWidget {
 
 class _IndexState extends State<Index> {
   final GlobalKey<ScaffoldState> drawerkey = GlobalKey();
-  int currentTabIndex = 0;
+  // int currentTabIndex = 0;
   void openCloseDrawer() {
     drawerkey.currentState!.isDrawerOpen
         ? Navigator.pop(context)
@@ -44,7 +45,7 @@ class _IndexState extends State<Index> {
                   svgSrc: Icons.home,
                   press: () {
                     setState(() {
-                      currentTabIndex = 0;
+                      widget.id = 0;
                     });
                     openCloseDrawer();
                   }),
@@ -53,7 +54,7 @@ class _IndexState extends State<Index> {
                   svgSrc: Icons.person,
                   press: () {
                     setState(() {
-                      currentTabIndex = 1;
+                      widget.id = 1;
                     });
                     openCloseDrawer();
                   })
@@ -61,7 +62,7 @@ class _IndexState extends State<Index> {
           ),
         ),
       ),
-      body: tabs[currentTabIndex],
+      body: tabs[widget.id],
     );
   }
 }
